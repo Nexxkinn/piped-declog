@@ -1,0 +1,20 @@
+#!/sbin/openrc-run
+
+#me="busybox $SVCNAME"
+#command="/usr/sbin/$SVCNAME"
+
+workdir="/var/run"
+start_stop_daemon_args='--group piped --chdir $workdir'
+command_user="piped:piped"
+command="/home/piped/piped-proxy"
+command_background=true
+pidfile="/run/${RC_SVCNAME}.pid"
+
+depend() {
+    need net
+    after piped-be firewall
+}
+
+start() {
+    checkpath -d /var/run/socket
+}
