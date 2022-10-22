@@ -1,0 +1,18 @@
+#!/sbin/openrc-run
+
+workdir="/root"
+start_stop_daemon_args='--group root --chdir $workdir'
+command_user="root:root"
+command="/usr/bin/java"
+command_args="-jar piped-server.jar"
+command_background=true
+pidfile="/run/${RC_SVCNAME}.pid"
+
+depend() {
+    need net
+    after postgresql firewall
+}
+
+start_pre() {
+    checkpath -d /var/run/socket
+}

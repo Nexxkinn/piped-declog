@@ -1,8 +1,5 @@
 #!/sbin/openrc-run
 
-#me="busybox $SVCNAME"
-#command="/usr/sbin/$SVCNAME"
-
 workdir="/var/run"
 start_stop_daemon_args='--group piped --chdir $workdir'
 command_user="piped:piped"
@@ -15,6 +12,6 @@ depend() {
     after piped-be firewall
 }
 
-start() {
+start_pre() {
     checkpath -d /var/run/socket
 }

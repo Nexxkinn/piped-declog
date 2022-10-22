@@ -1,13 +1,15 @@
 #!/bin/bash
 
-apk add --no-cache postgresql14 nginx
+apk add --no-cache postgresql14 nginx openjdk17-jre-headless
+
+set -e
 
 # Nginx
 mkdir -p /etc/nginx/conf.d
 mkdir -p /etc/nginx/snippets
 
-rm -rf ./config/
-cp -r config_template config 
+# rm -rf ./config/
+# cp -r config_template config 
 
 # this command below won't do anything
 
@@ -21,11 +23,15 @@ cp -r config_template config
 
 rm /etc/nginx/nginx.conf
 
-ln -sf $(pwd)/config/piped*.conf /etc/nginx/conf.d/
 ln -sf $(pwd)/config/nginx.conf /etc/nginx/nginx.conf
 ln -sf $(pwd)/config/ytproxy.conf /etc/nginx/snippets/ytproxy.conf
+ln -sf $(pwd)/config/piped*.conf /etc/nginx/conf.d/
 
 # Postgres
+rc-service postgresql stop
+rm -rf /var/lib/postgresql/14/
+su postgres -c 'initdb --username=piped -A scram-sha-256 --pwfile=<(echo changeme) --pgdata="/var/lib/postgresql/14/data/"'
+rc-service postgresql start
+PGPASSWORD=changeme psql -U piped -c "create database piped;" -d postgres
 
-sudo -u postgres initdb --username=piped -A scram-sha-256 --pwfile=<(echo changeme) --pgdata="/var/lib/postgresql/14/data/"
-psql -U piped -c "create database piped;"
+sed -i 's/pipedapi.kavin.rocks/portal.owl-snapper.ts.net\/piped-proxy\//g' /usr/share/nginx/html/assets/*
