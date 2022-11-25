@@ -1,17 +1,18 @@
 #!/sbin/openrc-run
 
 workdir="/var/run"
-start_stop_daemon_args='--group piped --chdir $workdir'
-command_user="piped:piped"
-command="/home/piped/piped-proxy"
+start_stop_daemon_args='--group root --chdir $workdir'
+command_user="root:root"
+command="/root/piped-proxy"
 command_background=true
 pidfile="/run/${RC_SVCNAME}.pid"
 
 depend() {
     need net
-    after piped-be firewall
+    after firewall
 }
 
 start_pre() {
     checkpath -d /var/run/socket
+    export UDS=1
 }

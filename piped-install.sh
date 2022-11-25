@@ -34,4 +34,7 @@ su postgres -c 'initdb --username=piped -A scram-sha-256 --pwfile=<(echo changem
 rc-service postgresql start
 PGPASSWORD=changeme psql -U piped -c "create database piped;" -d postgres
 
-sed -i 's/pipedapi.kavin.rocks/portal.owl-snapper.ts.net\/piped-proxy\//g' /usr/share/nginx/html/assets/*
+sed -i 's/pipedapi.kavin.rocks/<put_your_host_api_here>\/piped-proxy\//g' /usr/share/nginx/html/assets/*
+
+# piped-proxy
+touch /var/run/socket/actix.sock
